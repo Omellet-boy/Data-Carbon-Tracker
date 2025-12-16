@@ -10,9 +10,7 @@ const EMISSION_FACTORS_G_PER_GB = {
     'browsing': 0.2 
 };
 
-/**
- * Calculates the total CO2 emissions based on data usage and activity type.
- */
+// Calculates the total CO2 emissions based on data usage and activity type.
 function calculateCarbon() {
     const dataInput = document.getElementById('data-input');
     const activitySelector = document.getElementById('activity-selector');
@@ -40,21 +38,21 @@ function calculateCarbon() {
         return;
     }
 
-    // 2. Get the specific CO2 factor (in grams/GB)
+    // Get the specific CO2 factor (in grams/GB)
     const co2_per_gb_grams = EMISSION_FACTORS_G_PER_GB[selectedActivity];
     const co2_per_gb_kg = co2_per_gb_grams / 1000; // Convert to kg/GB
 
-    // 3. Calculation: Total CO2 (kg) = Data Usage (GB) * CO2 per GB (kg/GB)
+    // Calculation: Total CO2 (kg) = Data Usage (GB) * CO2 per GB (kg/GB)
     const totalCO2_kg = dataUsageGB * co2_per_gb_kg;
 
     // Formatting the result to a maximum of 3 decimal places
     const formattedCO2 = totalCO2_kg.toFixed(3);
 
-    // 4. Update UI
+    // Update UI
     co2ResultSpan.textContent = formattedCO2;
     resultBox.classList.remove('hidden');
 
-    // 5. Generate Explanation
+    // Generate Explanation
     explanationText.innerHTML = generateExplanation(totalCO2_kg, co2_per_gb_grams);
     explanationBox.classList.remove('hidden');
 }
@@ -87,4 +85,5 @@ function generateExplanation(co2_kg, factor_g) {
     explanation += "<br>The emissions factor used here reflects the higher energy demands of data centers and network components for your chosen activity. Choosing energy-efficient services and lowering video quality can significantly reduce this impact.";
 
     return explanation;
+
 }
