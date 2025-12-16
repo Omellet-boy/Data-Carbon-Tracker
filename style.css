@@ -1,6 +1,6 @@
 :root {
-    --primary-color: #4CAF50; /* Green */
-    --secondary-color: #388E3C; /* Darker Green */
+    --primary-color: #4CAF50; 
+    --secondary-color: #388E3C; 
     --background-color: #f7f7f7;
     --text-color: #333;
     --box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -19,7 +19,7 @@ body {
 }
 
 .container {
-    max-width: 400px; /* Mobile-friendly max width */
+    max-width: 400px;
     width: 100%;
     padding: 30px;
     background: #fff;
@@ -49,7 +49,7 @@ input[type="number"] {
     padding: 12px;
     border: 1px solid #ddd;
     border-radius: 8px;
-    box-sizing: border-box; /* Include padding in width */
+    box-sizing: border-box;
     font-size: 16px;
 }
 
@@ -75,7 +75,7 @@ button:hover {
     padding: 20px;
     border: 2px solid var(--primary-color);
     border-radius: 10px;
-    background-color: #e8f5e9; /* Light green background */
+    background-color: #e8f5e9; 
 }
 
 .result-value {
@@ -112,16 +112,14 @@ button:hover {
     display: none;
 }
 
-/* ... (Keep all existing styles) ... */
 
 input[type="number"],
-select { /* Updated selector to include the new dropdown */
+select {
     width: 100%;
     padding: 12px;
     border: 1px solid #ddd;
     border-radius: 8px;
     box-sizing: border-box;
     font-size: 16px;
-    /* Added height consistency */
     height: 45px; 
 }
