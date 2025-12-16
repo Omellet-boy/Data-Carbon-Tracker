@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Carbon Tracker</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>🌱 Digital Carbon Tracker</h1>
+        <p>Estimate the CO2 impact of your data usage.</p>
+
+        <div class="input-group">
+            <label for="data-input">Data Used (in GB):</label>
+            <input type="number" id="data-input" value="100" min="0" placeholder="e.g., 100" aria-label="Data input in Gigabytes">
+        </div>
+
+        <div class="input-group">
+            <label for="activity-selector">Type of Activity:</label>
+            <select id="activity-selector" aria-label="Select data usage activity type">
+                <option value="default" disabled>Select an activity</option>
+                <option value="streaming_hd">HD Video Streaming (High Impact)</option>
+                <option value="gaming">Online Gaming / Large Downloads (Moderate Impact)</option>
+                <option value="browsing" selected>Standard Browsing / Email (Low Impact)</option>
+            </select>
+        </div>
+        <button onclick="calculateCarbon()">Calculate CO2</button>
+
+        <div id="result-box" class="result-box hidden">
+            <h2 id="result-title">Your Digital Footprint</h2>
+            <p class="result-value"><span id="co2-result">0</span> kg CO2</p>
+        </div>
+
+        <div id="explanation-box" class="explanation-box hidden">
+            <h3>Understanding the Result</h3>
+            <p id="explanation-text"></p>
+            <p class="note"><strong>Disclaimer:</strong> This is a simplified estimate based on varying g CO2 per GB for different activities. Actual emissions depend on factors like your connection, device, and the data center's energy source.</p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
