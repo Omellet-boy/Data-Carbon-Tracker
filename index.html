@@ -2,42 +2,89 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Data Carbon Tracker</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>EcoData AI - Carbon Tracker</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container">
-        <h1>🌱 Digital Carbon Tracker</h1>
-        <p>Estimate the CO2 impact of your data usage.</p>
 
-        <div class="input-group">
-            <label for="data-input">Data Used (in GB):</label>
-            <input type="number" id="data-input" value="100" min="0" placeholder="e.g., 100" aria-label="Data input in Gigabytes">
-        </div>
+    <nav class="navbar">
+        <span>🌱 EcoData AI</span>
+    </nav>
 
-        <div class="input-group">
-            <label for="activity-selector">Type of Activity:</label>
-            <select id="activity-selector" aria-label="Select data usage activity type">
-                <option value="default" disabled>Select an activity</option>
-                <option value="streaming_hd">HD Video Streaming (High Impact)</option>
-                <option value="gaming">Online Gaming / Large Downloads (Moderate Impact)</option>
-                <option value="browsing" selected>Standard Browsing / Email (Low Impact)</option>
-            </select>
-        </div>
-        <button onclick="calculateCarbon()">Calculate CO2</button>
+    <main class="container">
+        <h1>Your Digital Footprint</h1>
 
-        <div id="result-box" class="result-box hidden">
-            <h2 id="result-title">Your Digital Footprint</h2>
-            <p class="result-value"><span id="co2-result">0</span> kg CO2</p>
-        </div>
+        <div class="dashboard-grid">
+            
+            <div class="card" style="text-align: center;">
+                <h3>Monthly Impact</h3>
+                
+                <div class="chart-container" id="chart-visual">
+                    <div class="inner-circle">
+                        <span class="percent-big" id="percentage-text">0%</span>
+                        <span class="percent-label">of Monthly Target</span>
+                    </div>
+                </div>
 
-        <div id="explanation-box" class="explanation-box hidden">
-            <h3>Understanding the Result</h3>
-            <p id="explanation-text"></p>
-            <p class="note"><strong>Disclaimer:</strong> This is a simplified estimate based on varying g CO2 per GB for different activities. Actual emissions depend on factors like your connection, device, and the data center's energy source.</p>
+                <h2 style="margin: 15px 0;"><span id="co2-result">0</span> kg CO<sub>2</sub></h2>
+                
+                <p id="explanation-text" style="color: #666; font-size: 0.9rem;">
+                    Enter your data usage to reveal your impact.
+                </p>
+
+                <div id="tips-container">
+                    <div class="menu-header">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+                        Smart Recommendations
+                    </div>
+                    
+                    <button class="accordion-btn">⚡ Immediate Actions <span>+</span></button>
+                    <div class="panel"><ul id="tips-immediate"></ul></div>
+
+                    <button class="accordion-btn">📅 Daily Habits <span>+</span></button>
+                    <div class="panel"><ul id="tips-habits"></ul></div>
+
+                    <button class="accordion-btn">⚙️ Device Settings <span>+</span></button>
+                    <div class="panel"><ul id="tips-settings"></ul></div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>Calculate</h3>
+                
+                <div class="input-group">
+                    <label>Gender</label>
+                    <select id="gender-select">
+                        <option value="" disabled selected>Select...</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label>Monthly Data Usage (GB)</label>
+                    <input type="number" id="data-input" placeholder="e.g. 150" min="0" inputmode="numeric">
+                </div>
+
+                <div class="input-group">
+                    <label>Primary Activity</label>
+                    <select id="activity-select">
+                        <option value="" disabled selected>Select...</option>
+                        <option value="streaming_hd">HD Streaming</option>
+                        <option value="gaming">Gaming</option>
+                        <option value="browsing">Browsing</option>
+                    </select>
+                </div>
+
+                <button id="calc-btn">Calculate Impact</button>
+                
+                <p id="status-message" style="margin-top:15px; font-size:0.85rem;"></p>
+            </div>
         </div>
-    </div>
+    </main>
 
     <script src="script.js"></script>
 </body>

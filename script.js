@@ -1,89 +1,180 @@
-// ** Content Team Integration: Activity-Specific Emissions Factors **
-// Estimates in grams of CO2e per Gigabyte (g/GB) for Operational Energy.
-// Note: These figures are illustrative and represent simplified averages.
-const EMISSION_FACTORS_G_PER_GB = {
-    // High Impact: Large data transfer + high processing/rendering (e.g., 4K streaming, heavy cloud gaming)
-    'streaming_hd': 0.8, 
-    // Moderate Impact: Consistent data transfer, less processing (e.g., general online gaming, large file uploads)
-    'gaming': 0.4, 
-    // Low Impact: Smaller data transfer, text/image heavy (e.g., standard browsing, email, audio streaming)
-    'browsing': 0.2 
-};
+const SUPABASE_URL = 'https://jrdxoxzovgrrhisddlxg.supabase.co'; 
+const SUPABASE_KEY = 'sb_publishable_1fOfJo6VXa7YDTOPeW2hcg_3LZTBR9V'; 
 
-// Calculates the total CO2 emissions based on data usage and activity type.
-function calculateCarbon() {
-    const dataInput = document.getElementById('data-input');
-    const activitySelector = document.getElementById('activity-selector');
-
-    const dataUsageGB = parseFloat(dataInput.value);
-    const selectedActivity = activitySelector.value;
-
-    const resultBox = document.getElementById('result-box');
-    const co2ResultSpan = document.getElementById('co2-result');
-    const explanationBox = document.getElementById('explanation-box');
-    const explanationText = document.getElementById('explanation-text');
-    
-    // 1. Validation for Data and Activity
-    if (isNaN(dataUsageGB) || dataUsageGB < 0) {
-        co2ResultSpan.textContent = "Invalid Data Input";
-        resultBox.classList.remove('hidden');
-        explanationBox.classList.add('hidden');
-        return;
-    }
-
-    if (selectedActivity === 'default') {
-        co2ResultSpan.textContent = "Select Activity";
-        resultBox.classList.remove('hidden');
-        explanationBox.classList.add('hidden');
-        return;
-    }
-
-    // Get the specific CO2 factor (in grams/GB)
-    const co2_per_gb_grams = EMISSION_FACTORS_G_PER_GB[selectedActivity];
-    const co2_per_gb_kg = co2_per_gb_grams / 1000; // Convert to kg/GB
-
-    // Calculation: Total CO2 (kg) = Data Usage (GB) * CO2 per GB (kg/GB)
-    const totalCO2_kg = dataUsageGB * co2_per_gb_kg;
-
-    // Formatting the result to a maximum of 3 decimal places
-    const formattedCO2 = totalCO2_kg.toFixed(3);
-
-    // Update UI
-    co2ResultSpan.textContent = formattedCO2;
-    resultBox.classList.remove('hidden');
-
-    // Generate Explanation
-    explanationText.innerHTML = generateExplanation(totalCO2_kg, co2_per_gb_grams);
-    explanationBox.classList.remove('hidden');
+let supabaseClient = null;
+if (typeof supabase !== 'undefined') {
+    supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 }
 
-/**
- * Generates an explanation text based on the calculated CO2 in kg and the factor used.
- * @param {number} co2_kg - The calculated CO2 in kilograms.
- * @param {number} factor_g - The emission factor used in grams/GB.
- * @returns {string} HTML string with explanation and comparison.
- */
-function generateExplanation(co2_kg, factor_g) {
-    if (co2_kg < 0.001) {
-        return `Your data usage generated negligible emissions (${factor_g.toFixed(1)}g/GB used).`;
+function generateSmartTips(activity, gb) {
+    let tips = { immediate: [], habits: [], settings: [] };
+
+    const isHighUsage = gb > 200;
+    const isMediumUsage = gb > 50 && gb <= 200;
+
+    if (activity === 'streaming_hd') {
+        if (isHighUsage) {
+            tips.immediate.push(`You used ${gb}GB. Consider switching to "Standard Definition" to save data.`);
+            tips.immediate.push("If available, try using Wi-Fi instead of cellular data.");
+            tips.habits.push("When binge-watching, remember that 2 hours of 4K is about 14GB.");
+            tips.settings.push("Disabling 'Autoplay' can help prevent accidental usage.");
+        } else if (isMediumUsage) {
+            tips.immediate.push("Your usage is average. Closing unused tabs can help save a bit more.");
+            tips.immediate.push("Try downloading instead of streaming video.");
+            tips.habits.push("Downloading content on Wi-Fi before trips is a great habit.");
+            tips.settings.push("Check if your app has a 'Data Saver' mode enabled.");
+        } else {
+            tips.immediate.push("Great job keeping your usage sustainable!");
+            tips.habits.push("Keep up the good work of using Wi-Fi when possible.");
+            tips.settings.push("You are already using efficient settings.");
+        }
+    } 
+    else if (activity === 'gaming') {
+        if (isHighUsage) {
+            tips.immediate.push("Large game updates are likely the cause. Can you schedule them for off-peak hours?");
+            tips.immediate.push("Reviewing installed games and removing unused ones helps stop updates.");
+            tips.habits.push("Try to download big patches over night or when energy demand is lower.");
+            tips.settings.push("Check your launcher settings for an 'Auto-Update Schedule'.");
+        } else if (isMediumUsage) {
+            tips.immediate.push("Closing game launchers when not in use prevents background drain.");
+            tips.habits.push("Single-player or offline modes use significantly less data than online play.");
+            tips.settings.push("Setting your console to 'Energy Saver' is a quick win.");
+        } else {
+            tips.immediate.push("Your gaming footprint is very low. Nice work!");
+            tips.habits.push("Putting your device to sleep after playing helps maintain this.");
+            tips.settings.push("Your current update schedule seems efficient.");
+        }
     }
-
-    // Comparison Values (same as previous version)
-    const drivingDistance_km = co2_kg / 0.1; // 100g CO2 per km
-    const kettleBoils = co2_kg / 0.036;     // 36g CO2 per boil
-    
-    let explanation = `Using a factor of ${factor_g.toFixed(1)}g CO2 per GB, your usage generated ${co2_kg.toFixed(3)} kg of CO2.`;
-
-    if (drivingDistance_km >= 0.1) {
-        explanation += ` This is roughly equivalent to driving a small petrol car for ${drivingDistance_km.toFixed(1)} km.`;
+    else { 
+        if (gb > 50) {
+            tips.immediate.push("Browsing usage is a bit high. Video-heavy sites might be the cause.");
+            tips.habits.push("Compressing large files before uploading to the cloud saves space.");
+            tips.settings.push("An ad-blocker can improve load times and reduce data.");
+        } else if (isMediumUsage) {
+            tips.immediate.push("Closing browser tabs you aren't using is a simple way to save.");
+            tips.habits.push("Bookmarking your favorite sites saves searching every time.");
+            tips.settings.push("Clearing your cache occasionally helps browser efficiency.");
+        } else {
+            tips.immediate.push("Excellent! Text and image browsing has a very low impact.");
+            tips.habits.push("Unsubscribing from unused newsletters keeps your inbox clean.");
+            tips.settings.push(" 'Lite Mode' in browsers can save even more data.");
+        }
     }
-
-    if (kettleBoils >= 1) {
-        explanation += ` Or, it's the same carbon footprint as boiling a kettle ${kettleBoils.toFixed(0)} times.`;
-    }
-
-    explanation += "<br>The emissions factor used here reflects the higher energy demands of data centers and network components for your chosen activity. Choosing energy-efficient services and lowering video quality can significantly reduce this impact.";
-
-    return explanation;
-
+    return tips;
 }
+
+async function runCalculation() {
+    const genderVal = document.getElementById('gender-select').value;
+    const dataVal = parseFloat(document.getElementById('data-input').value);
+    const activityVal = document.getElementById('activity-select').value;
+    const statusMsg = document.getElementById('status-message');
+    const tipsContainer = document.getElementById('tips-container');
+    const chartVisual = document.getElementById('chart-visual');
+
+    if (genderVal === "") { alert("Please select a Gender."); return; }
+    if (isNaN(dataVal) || dataVal < 0) { alert("Please enter valid Data Usage."); return; }
+    if (activityVal === "") { alert("Please select an Activity."); return; }
+
+    statusMsg.textContent = "Analyzing...";
+    statusMsg.style.color = "#666";
+
+    const factors = { 'streaming_hd': 0.8, 'gaming': 0.4, 'browsing': 0.2 };
+    const co2Result = dataVal * (factors[activityVal] / 1000); 
+
+    const MONTHLY_LIMIT = 1.0; 
+    let percent = (co2Result / MONTHLY_LIMIT) * 100;
+    let visualPercent = Math.min(Math.max(percent, 5), 100);
+    
+    let color = '#4CAF50';
+    let statusText = "Sustainable";
+    let statusClass = "status-low";
+
+    if (percent > 100) {
+        color = '#D32F2F';
+        statusText = "High Impact";
+        statusClass = "status-high";
+    } else if (percent > 50) {
+        color = '#F57C00';
+        statusText = "Moderate";
+        statusClass = "status-mid";
+    }
+
+    document.getElementById('co2-result').textContent = co2Result.toFixed(3);
+    chartVisual.style.background = `conic-gradient(${color} ${(visualPercent/100)*360}deg, #E5E7EB 0)`;
+    document.getElementById('percentage-text').textContent = Math.round(percent) + '%';
+    
+    const explainText = document.getElementById('explanation-text');
+    explainText.innerHTML = `Result: <span class="${statusClass}">${statusText}</span> usage level.`;
+
+    const myTips = generateSmartTips(activityVal, dataVal);
+    
+    const fillList = (id, items) => {
+        const list = document.getElementById(id);
+        list.innerHTML = "";
+        items.forEach(item => {
+            let li = document.createElement("li");
+            li.textContent = item;
+            list.appendChild(li);
+        });
+    };
+
+    fillList('tips-immediate', myTips.immediate);
+    fillList('tips-habits', myTips.habits);
+    fillList('tips-settings', myTips.settings);
+
+    tipsContainer.style.display = "block";
+    if(window.innerWidth < 768) {
+        tipsContainer.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    if (supabaseClient) {
+        try {
+            const { error } = await supabaseClient
+                .from('carbon_entries')
+                .insert([{ 
+                    gender: genderVal,
+                    data_usage_gb: dataVal, 
+                    activity_type: activityVal, 
+                    total_co2_kg: co2Result.toFixed(4)
+                }]);
+
+            if (error) {
+                console.error("DB Error:", error);
+                statusMsg.textContent = "Saved locally (Offline).";
+            } else {
+                statusMsg.textContent = "✔ Saved to cloud.";
+                statusMsg.style.color = "green";
+            }
+        } catch (err) { console.error(err); }
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const btn = document.getElementById('calc-btn');
+    if(btn) btn.addEventListener('click', runCalculation);
+
+    const acc = document.getElementsByClassName("accordion-btn");
+    for (let i = 0; i < acc.length; i++) {
+        acc[i].addEventListener("click", function() {
+            for(let j=0; j<acc.length; j++) {
+                if(acc[j] !== this) {
+                    acc[j].classList.remove("active");
+                    acc[j].nextElementSibling.style.maxHeight = null;
+                    acc[j].querySelector('span').textContent = "+";
+                }
+            }
+
+            this.classList.toggle("active");
+            const panel = this.nextElementSibling;
+            const icon = this.querySelector('span');
+            
+            if (panel.style.maxHeight) {
+                panel.style.maxHeight = null;
+                icon.textContent = "+";
+            } else {
+                panel.style.maxHeight = panel.scrollHeight + "px";
+                icon.textContent = "−";
+            } 
+        });
+    }
+});
