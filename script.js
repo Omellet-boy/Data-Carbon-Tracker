@@ -8,56 +8,56 @@ if (typeof supabase !== 'undefined') {
 
 function generateSmartTips(activity, gb) {
     let tips = { immediate: [], habits: [], settings: [] };
-
     const isHighUsage = gb > 200;
     const isMediumUsage = gb > 50 && gb <= 200;
 
     if (activity === 'streaming_hd') {
         if (isHighUsage) {
             tips.immediate.push(`You used ${gb}GB. Consider switching to "Standard Definition" to save data.`);
-            tips.immediate.push("If available, try using Wi-Fi instead of cellular data.");
-            tips.habits.push("When binge-watching, remember that 2 hours of 4K is about 14GB.");
-            tips.settings.push("Disabling 'Autoplay' can help prevent accidental usage.");
+            tips.immediate.push("Try using Wi-Fi instead of cellular data to reduce network strain.");
+            tips.immediate.push("Consider downloading instead of streaming video.");            
+            tips.habits.push("When binge-watching, remember that 4K content uses significantly more energy.");
+            tips.settings.push("Disabling 'Autoplay' can help prevent accidental data usage.");
         } else if (isMediumUsage) {
-            tips.immediate.push("Your usage is average. Closing unused tabs can help save a bit more.");
-            tips.immediate.push("Try downloading instead of streaming video.");
-            tips.habits.push("Downloading content on Wi-Fi before trips is a great habit.");
-            tips.settings.push("Check if your app has a 'Data Saver' mode enabled.");
+            tips.immediate.push("Your usage is average. Closing unused browser tabs can save a bit of energy.");
+            tips.immediate.push("Consider downloading instead of streaming video.");
+            tips.habits.push("Downloading content on Wi-Fi before trips is a great way to stay efficient.");
+            tips.settings.push("Check if your app has a 'Data Saver' mode to optimize performance.");
         } else {
-            tips.immediate.push("Great job keeping your usage sustainable!");
-            tips.habits.push("Keep up the good work of using Wi-Fi when possible.");
-            tips.settings.push("You are already using efficient settings.");
+            tips.immediate.push("Great job! Your streaming habits are very sustainable.");
+            tips.habits.push("Keep up the good habit of using Wi-Fi for heavy content.");
+            tips.settings.push("Your current settings appear perfectly optimized.");
         }
     } 
     else if (activity === 'gaming') {
         if (isHighUsage) {
-            tips.immediate.push("Large game updates are likely the cause. Can you schedule them for off-peak hours?");
-            tips.immediate.push("Reviewing installed games and removing unused ones helps stop updates.");
-            tips.habits.push("Try to download big patches over night or when energy demand is lower.");
+            tips.immediate.push("Large game updates may be the cause. Try scheduling them for off-peak hours.");
+            tips.immediate.push("Reviewing installed games and removing unused ones stops background updates.");
+            tips.habits.push("Schedule big patches overnight when energy demand on the grid is lower.");
             tips.settings.push("Check your launcher settings for an 'Auto-Update Schedule'.");
         } else if (isMediumUsage) {
-            tips.immediate.push("Closing game launchers when not in use prevents background drain.");
+            tips.immediate.push("Closing game launchers when not in use prevents background data drain.");
             tips.habits.push("Single-player or offline modes use significantly less data than online play.");
-            tips.settings.push("Setting your console to 'Energy Saver' is a quick win.");
+            tips.settings.push("Setting your console or PC to 'Energy Saver' is a quick win.");
         } else {
-            tips.immediate.push("Your gaming footprint is very low. Nice work!");
-            tips.habits.push("Putting your device to sleep after playing helps maintain this.");
-            tips.settings.push("Your current update schedule seems efficient.");
+            tips.immediate.push("Your gaming footprint is very low. Excellent work!");
+            tips.habits.push("Putting your device to sleep after playing helps maintain this level.");
+            tips.settings.push("Your current update schedule is very efficient.");
         }
     }
     else { 
         if (gb > 50) {
-            tips.immediate.push("Browsing usage is a bit high. Video-heavy sites might be the cause.");
-            tips.habits.push("Compressing large files before uploading to the cloud saves space.");
-            tips.settings.push("An ad-blocker can improve load times and reduce data.");
+            tips.immediate.push("Browsing usage is a bit high. Video-heavy sites might be the reason.");
+            tips.habits.push("Compressing large files before uploading to the cloud saves server energy.");
+            tips.settings.push("An ad-blocker can improve load times and reduce background data.");
         } else if (isMediumUsage) {
-            tips.immediate.push("Closing browser tabs you aren't using is a simple way to save.");
-            tips.habits.push("Bookmarking your favorite sites saves searching every time.");
-            tips.settings.push("Clearing your cache occasionally helps browser efficiency.");
+            tips.immediate.push("Closing browser tabs you aren't using is a simple way to stay lean.");
+            tips.habits.push("Bookmarking favorite sites saves searching every time.");
+            tips.settings.push("Clearing your cache occasionally can help browser efficiency.");
         } else {
-            tips.immediate.push("Excellent! Text and image browsing has a very low impact.");
-            tips.habits.push("Unsubscribing from unused newsletters keeps your inbox clean.");
-            tips.settings.push(" 'Lite Mode' in browsers can save even more data.");
+            tips.immediate.push("Excellent! Text and image browsing has a very low carbon impact.");
+            tips.habits.push("Unsubscribing from unused newsletters keeps your digital space clean.");
+            tips.settings.push("'Lite Mode' in mobile browsers can save even more data.");
         }
     }
     return tips;
@@ -65,6 +65,7 @@ function generateSmartTips(activity, gb) {
 
 async function runCalculation() {
     const genderVal = document.getElementById('gender-select').value;
+    const ageVal = parseInt(document.getElementById('age-input').value);
     const dataVal = parseFloat(document.getElementById('data-input').value);
     const activityVal = document.getElementById('activity-select').value;
     const statusMsg = document.getElementById('status-message');
@@ -72,6 +73,7 @@ async function runCalculation() {
     const chartVisual = document.getElementById('chart-visual');
 
     if (genderVal === "") { alert("Please select a Gender."); return; }
+    if (isNaN(ageVal) || ageVal < 1) { alert("Please enter a valid Age."); return; }
     if (isNaN(dataVal) || dataVal < 0) { alert("Please enter valid Data Usage."); return; }
     if (activityVal === "") { alert("Please select an Activity."); return; }
 
@@ -107,7 +109,6 @@ async function runCalculation() {
     explainText.innerHTML = `Result: <span class="${statusClass}">${statusText}</span> usage level.`;
 
     const myTips = generateSmartTips(activityVal, dataVal);
-    
     const fillList = (id, items) => {
         const list = document.getElementById(id);
         list.innerHTML = "";
@@ -123,9 +124,6 @@ async function runCalculation() {
     fillList('tips-settings', myTips.settings);
 
     tipsContainer.style.display = "block";
-    if(window.innerWidth < 768) {
-        tipsContainer.scrollIntoView({ behavior: 'smooth' });
-    }
 
     if (supabaseClient) {
         try {
@@ -133,6 +131,7 @@ async function runCalculation() {
                 .from('carbon_entries')
                 .insert([{ 
                     gender: genderVal,
+                    age: ageVal,
                     data_usage_gb: dataVal, 
                     activity_type: activityVal, 
                     total_co2_kg: co2Result.toFixed(4)
@@ -163,11 +162,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     acc[j].querySelector('span').textContent = "+";
                 }
             }
-
             this.classList.toggle("active");
             const panel = this.nextElementSibling;
             const icon = this.querySelector('span');
-            
             if (panel.style.maxHeight) {
                 panel.style.maxHeight = null;
                 icon.textContent = "+";
@@ -177,39 +174,12 @@ document.addEventListener('DOMContentLoaded', () => {
             } 
         });
     }
-});
-
-
-document.addEventListener('DOMContentLoaded', () => {
-
-    const btn = document.getElementById('calc-btn');
-    if(btn) btn.addEventListener('click', runCalculation);
-
-    const acc = document.getElementsByClassName("accordion-btn");
-    for (let i = 0; i < acc.length; i++) {
-        acc[i].addEventListener("click", function() {
-            this.classList.toggle("active");
-            const panel = this.nextElementSibling;
-            panel.style.maxHeight = panel.style.maxHeight ? null : panel.scrollHeight + "px";
-        });
-    }
 
     const modal = document.getElementById("help-modal");
     const helpLink = document.getElementById("help-link");
     const closeBtn = document.querySelector(".close-modal");
 
-    helpLink.onclick = (e) => {
-        e.preventDefault();
-        modal.style.display = "block";
-    }
-
-    closeBtn.onclick = () => {
-        modal.style.display = "none";
-    }
-
-    window.onclick = (event) => {
-        if (event.target == modal) {
-            modal.style.display = "none";
-        }
-    }
+    helpLink.onclick = (e) => { e.preventDefault(); modal.style.display = "block"; }
+    closeBtn.onclick = () => { modal.style.display = "none"; }
+    window.onclick = (event) => { if (event.target == modal) { modal.style.display = "none"; } }
 });
