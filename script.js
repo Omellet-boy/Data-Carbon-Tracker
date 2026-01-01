@@ -178,3 +178,38 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
+
+
+document.addEventListener('DOMContentLoaded', () => {
+
+    const btn = document.getElementById('calc-btn');
+    if(btn) btn.addEventListener('click', runCalculation);
+
+    const acc = document.getElementsByClassName("accordion-btn");
+    for (let i = 0; i < acc.length; i++) {
+        acc[i].addEventListener("click", function() {
+            this.classList.toggle("active");
+            const panel = this.nextElementSibling;
+            panel.style.maxHeight = panel.style.maxHeight ? null : panel.scrollHeight + "px";
+        });
+    }
+
+    const modal = document.getElementById("help-modal");
+    const helpLink = document.getElementById("help-link");
+    const closeBtn = document.querySelector(".close-modal");
+
+    helpLink.onclick = (e) => {
+        e.preventDefault();
+        modal.style.display = "block";
+    }
+
+    closeBtn.onclick = () => {
+        modal.style.display = "none";
+    }
+
+    window.onclick = (event) => {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }
+});

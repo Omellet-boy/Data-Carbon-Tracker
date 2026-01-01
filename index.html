@@ -21,32 +21,21 @@
             
             <div class="card" style="text-align: center;">
                 <h3>Monthly Impact</h3>
-                
                 <div class="chart-container" id="chart-visual">
                     <div class="inner-circle">
                         <span class="percent-big" id="percentage-text">0%</span>
                         <span class="percent-label">of Monthly Target</span>
                     </div>
                 </div>
-
                 <h2 style="margin: 15px 0;"><span id="co2-result">0</span> kg CO<sub>2</sub></h2>
-                
-                <p id="explanation-text" style="color: #666; font-size: 0.9rem;">
-                    Enter your data usage to reveal your impact.
-                </p>
+                <p id="explanation-text" style="color: #666; font-size: 0.9rem;">Enter your data usage to reveal your impact.</p>
 
                 <div id="tips-container">
-                    <div class="menu-header">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
-                        Smart Recommendations
-                    </div>
-                    
+                    <div class="menu-header">Smart Recommendations</div>
                     <button class="accordion-btn">⚡ Immediate Actions <span>+</span></button>
                     <div class="panel"><ul id="tips-immediate"></ul></div>
-
                     <button class="accordion-btn">📅 Daily Habits <span>+</span></button>
                     <div class="panel"><ul id="tips-habits"></ul></div>
-
                     <button class="accordion-btn">⚙️ Device Settings <span>+</span></button>
                     <div class="panel"><ul id="tips-settings"></ul></div>
                 </div>
@@ -54,7 +43,6 @@
 
             <div class="card">
                 <h3>Calculate</h3>
-                
                 <div class="input-group">
                     <label>Gender</label>
                     <select id="gender-select">
@@ -65,7 +53,10 @@
                 </div>
 
                 <div class="input-group">
-                    <label>Monthly Data Usage (GB)</label>
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <label>Monthly Data Usage (GB)</label>
+                        <a href="#" id="help-link" style="font-size: 0.75rem; color: var(--primary-teal); font-weight: 600;">How to find this?</a>
+                    </div>
                     <input type="number" id="data-input" placeholder="e.g. 150" min="0" inputmode="numeric">
                 </div>
 
@@ -80,11 +71,35 @@
                 </div>
 
                 <button id="calc-btn">Calculate Impact</button>
-                
                 <p id="status-message" style="margin-top:15px; font-size:0.85rem;"></p>
             </div>
         </div>
     </main>
+
+    <div id="help-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Where to find your usage?</h3>
+                <span class="close-modal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <h4>1. Check Device Settings</h4>
+                <ul>
+                    <li><strong>iPhone:</strong> Settings > Cellular</li>
+                    <li><strong>Android:</strong> Settings > Network > Data Usage</li>
+                    <li><strong>Windows:</strong> Settings > Network > Data usage</li>
+                </ul>
+                <h4>2. Use Rules of Thumb</h4>
+                <p>If you aren't sure, here is a typical monthly estimate:</p>
+                
+                <ul>
+                    <li><strong>Low (1-50GB):</strong> Mainly browsing and social media.</li>
+                    <li><strong>Medium (50-150GB):</strong> Daily HD streaming (1-2 hours).</li>
+                    <li><strong>High (150GB+):</strong> Frequent 4K streaming or large game downloads.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
 
     <script src="script.js"></script>
 </body>
